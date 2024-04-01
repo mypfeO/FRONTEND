@@ -1,0 +1,16 @@
+/* FormBodySectionStyles.css */
+.form-body-container {
+    background-color: #4093bb; /* White background color */
+    padding: 20px;
+  }
+  
+  .paper-container {
+    padding: 10px;
+    border: 2px dashed rgb(36, 30, 30);
+  }
+  
+  .empty-message {
+    color: #ddc3c3; /* Color for the empty message */
+    font-style: italic; /* Italicize the text */
+  }
+  

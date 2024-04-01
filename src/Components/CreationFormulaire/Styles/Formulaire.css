@@ -1,0 +1,23 @@
+/* App.css */
+body {
+  margin: 0; /* Supprime les marges par défaut du corps */
+  background-color: #EEF5FF; /* Couleur de fond de la page */
+}
+
+.app-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: stretch; /* Ajuster les éléments enfants pour qu'ils remplissent la hauteur */
+  height: 100vh; /* Définir la hauteur sur 100 % de la hauteur de la fenêtre */
+  /* Couleur de fond du conteneur */
+}
+
+.left-component {
+  flex: 1;
+  margin-right: 20px; /* Ajuster la marge entre les composants */
+}
+
+.right-component {
+  flex: 1;
+  margin-right: 20px; /* Ajuster la marge entre les composants */
+}

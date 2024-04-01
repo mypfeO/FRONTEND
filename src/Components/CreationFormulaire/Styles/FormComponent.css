@@ -1,0 +1,45 @@
+/* FormComponent.css */
+.form-container {
+   /* Set background color for the entire FormComponent */
+  padding: 20px;
+  box-shadow: 0px 0px 10px rgba(6, 5, 5, 0.1);
+  background-color:#4093bb;
+}
+/* FormComponent.css */
+.MuiPaper-root {
+  background-color:#4093bb !important; /* Set background color for the entire FormComponent */
+} 
+/* FormComponent.css */
+.MuiPaper-root .MuiPaper-root .MuiPaper-root .MuiPaper-root .MuiTypography-root {
+  color: white; /* Set text color to white */
+}
+
+.paper-container {
+  padding: 20px;
+  background-color: #9c9c9c; /* Gray background color for each section */
+  border-radius: 10px;
+}
+
+.form-title-section {
+  margin-right: 5px; /* Minimize margin from the right */
+  margin-bottom: 20px;
+}
+
+.form-body-section {
+  margin-right: 5px; /* Minimize margin from the right */
+  margin-bottom: 20px;
+}
+
+
+.form-footer-section {
+  margin-right: 5px; /* Minimize margin from the right */
+  margin-bottom: 20px;
+} 
+  
+.submit-button {
+  color: #fff; /* White text color for button */
+}
+.empty-message {
+  color: #ddc3c3; /* Color for the empty message */
+  font-style: italic; /* Italicize the text */
+}

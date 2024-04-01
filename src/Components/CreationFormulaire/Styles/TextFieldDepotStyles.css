@@ -1,0 +1,21 @@
+/* TextFieldDepotStyles.css */
+
+.depot-container {
+    height: 92vh; /* Définit la hauteur à 100% de la hauteur de la fenêtre */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    opacity: 1;
+    cursor: pointer;
+    background-color: #31708f;
+    border-radius: 5px;
+    padding: 10px;
+    margin-bottom: 20px;
+    transition: opacity 0.3s ease-in-out;
+  }
+  
+  .depot-container.dragging {
+    opacity: 0.5;
+  }
+  

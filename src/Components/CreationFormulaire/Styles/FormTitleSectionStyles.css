@@ -1,0 +1,26 @@
+/* FormTitleSectionStyles.css */
+.title-section-container {
+    background-color: #4093bb; /* Set background color for the entire component */
+    padding: 20px;
+    border-radius: 10px; /* Add border radius for a rounded appearance */
+  }
+  
+  .title-section {
+    color: #ffffff; /* Set title text color to white */
+  }
+  .MuiPaper-root {
+    background-color:#31708f; /* Set background color for the entire FormComponent */
+  }
+  /* FormTitleSectionStyles.css */
+.drop-section-text {
+    color: white; /* Set text color to white */
+  }
+  .empty-message {
+    color: #ddc3c3; /* Color for the empty message */
+    font-style: italic; /* Italicize the text */
+  }
+  .paper-container {
+    padding: 10px;
+    border: 2px dashed rgb(36, 30, 30);
+  }
+  

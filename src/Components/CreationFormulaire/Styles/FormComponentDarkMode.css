@@ -1,0 +1,11 @@
+/* FormComponentDarkMode.css */
+.dark-mode .form-container {
+    background-color: #333; /* Dark background color */
+    color: #fff; /* Light text color */
+  }
+  
+  .dark-mode .paper-container {
+    background-color: #444; /* Dark paper background color */
+    color: #fff; /* Light text color */
+  }
+  
