@@ -1,6 +1,6 @@
 // FormComponent.jsx
 import React, { useState } from 'react';
-import { Typography, Button, Grid, Paper } from '@mui/material';
+import { Typography, Button, Grid, Paper,Snackbar } from '@mui/material';
 import FormTitleSection from './FormTitleSection';
 import FormBodySection from './FormBodySection';
 import FormFooterSection from './FormFooterSection';
@@ -10,6 +10,7 @@ const FormComponent = () => {
   const [formTitle, setFormTitle] = useState(null);
   const [formFooter, setFormFooter] = useState(null);
   const [bodyItems, setBodyItems] = useState([]);
+  const [submissionMessageVisible, setSubmissionMessageVisible] = useState(false); // New state for submission message visibility
 
   const handleAddBodyItem = (title) => {
     const id = Date.now();
@@ -43,8 +44,9 @@ const FormComponent = () => {
   const handleFormSubmit = (event) => {
     event.preventDefault();
     console.log('Form submitted:', { formTitle, formFooter, bodyItems });
+    setSubmissionMessageVisible(true); // Show submission message
+    setTimeout(() => setSubmissionMessageVisible(false), 3000); // Hide after 3 seconds
   };
-
   return (
     <Grid container spacing={3} className="form-container">
       <Grid item xs={12}>
@@ -83,6 +85,11 @@ const FormComponent = () => {
         <Button type="submit" variant="contained" color="primary" fullWidth className="submit-button" onClick={handleFormSubmit}>
           Submit
         </Button>
+        <Snackbar
+          open={submissionMessageVisible}
+          message="Form submitted"
+          autoHideDuration={3000}
+        />
       </Grid>
     </Grid>
   );

@@ -1,47 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid, Typography, makeStyles } from '@material-ui/core';
-import { hash } from 'bcryptjs'; // Import hash function from bcryptjs for password hashing
-
-const useStyles = makeStyles((theme) => ({
-  formContainer: {
-    marginTop: theme.spacing(8), // Move the component down
-    width: '70%',
-    display: 'flex',
-    alignItems: 'center',
-  },
-  letterContainer: {
-    display: 'flex',
-    justifyContent: 'center',
-    marginRight: theme.spacing(10),
-    marginLeft: theme.spacing(-10),
-  },
-  letter: {
-    margin: theme.spacing(1),
-    transition: 'transform 0.2s',
-    color: '#3f51b5',
-    fontFamily: 'Arial, sans-serif',
-    fontSize: '3.2rem',
-    fontStyle: 'italic',
-    fontWeight: 'bold',
-    width: '50px',
-    height: '50px',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    border: '1px solid #ccc',
-    borderRadius: '5px',
-    cursor: 'pointer',
-  },
-  form: {
-    flexGrow: 1,
-  },
-  button: {
-    margin: theme.spacing(3, 0, 2),
-  },
-}));
+import { TextField, Button, Grid } from "@mui/material";
+import { useStyles } from './SignUpFormStyles'; // Importez useStyles de votre nouveau fichier
 
 const SignUpForm = ({ onSubmit }) => {
-  const classes = useStyles();
+  const classes = useStyles(); // Utilisez useStyles pour accéder à vos styles
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -49,6 +11,7 @@ const SignUpForm = ({ onSubmit }) => {
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
+
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
@@ -100,6 +63,7 @@ const SignUpForm = ({ onSubmit }) => {
   };
 
   return (
+    
     <Grid container justifyContent="center">
       <Grid item xs={12} sm={12} md={9} className={classes.formContainer}>
         <div className={classes.letterContainer}>
@@ -168,8 +132,7 @@ const SignUpForm = ({ onSubmit }) => {
             value={formData.confirmPassword}
             onChange={handleChange}
             error={!!errors.confirmPassword}
-            helper
-            Text={errors.confirmPassword}
+            helperText={errors.confirmPassword}
             />
             <Button
               type="submit"
@@ -183,6 +146,7 @@ const SignUpForm = ({ onSubmit }) => {
           </form>
         </Grid>
       </Grid>
+      
     );
   };
   

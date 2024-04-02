@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { TextField, Paper } from '@mui/material';
+import { TextField, Paper, Typography } from '@mui/material';
 import { useDrag } from 'react-dnd';
 import './Styles/TextFieldDepotStyles.css'; // Importer le style CSS
 
@@ -38,8 +38,10 @@ const DepotFieldContainer = ({ onDrop, value = '', onChange }) => {
       ref={drag}
       onClick={handleDrop}
     >
-      <h2 variant="h6" align="center" gutterBottom className="empty-message">Depot Field Container</h2>
-      <TextField
+          <Typography variant="h4" align="center" gutterBottom className="empty-message">
+         Depot Field Container
+        </Typography>                                 
+        <TextField
         variant="outlined"
         fullWidth
         placeholder="Enter your text here"
