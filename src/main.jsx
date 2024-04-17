@@ -4,6 +4,8 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import App from './Components/CreationFormulaire/Formulaire';
+import FormDataFetcher from './Components/SubmitionForm/FormDataFetcher.jsx';
+
 import Login from './Components/login/Login';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 
@@ -19,6 +21,7 @@ root.render(
         <Routes>
           <Route path="/" element={<Login />} />
         <Route path="/formulaire" element={<App />} />
+        <Route path="/submition" element={<FormDataFetcher />} />
         </Routes>
       </DndProvider>
     </Router>
