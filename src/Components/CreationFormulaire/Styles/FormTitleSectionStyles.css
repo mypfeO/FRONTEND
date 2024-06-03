@@ -1,6 +1,6 @@
 /* FormTitleSectionStyles.css */
 .title-section-container {
-    background-color: #4093bb; /* Set background color for the entire component */
+    background-color: #223f6c !important; /* Set background color for the entire component */
     padding: 20px;
     border-radius: 10px; /* Add border radius for a rounded appearance */
   }

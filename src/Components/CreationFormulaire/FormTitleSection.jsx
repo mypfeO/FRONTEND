@@ -6,6 +6,7 @@ import { useDrag } from 'react-dnd'; // Import useDrag hook
 import './Styles/FormTitleSectionStyles.css'; // Import the CSS file for title component
 
 const FormTitleSection = ({ formTitle, setFormTitle }) => {
+  console.log("formTitle: ", formTitle);
   const [{ isOver: isTitleOver }, titleDrop] = useDrop(() => ({
     accept: 'FORM_TEXT_FIELD',
     drop: (item) => setFormTitle(item.title),

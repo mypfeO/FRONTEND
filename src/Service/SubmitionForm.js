@@ -1,27 +1,23 @@
 
 import axios from 'axios';
 
-export const API_URL = "http://localhost:5157/api/PageWeb";
+export const API_URL = "http://localhost:5157/api/Formulaire";
 
-export const getFormByformIDSiteId = async (siteWebId,formId) => {
-  //  id = id || '';
-    try {
-    //  const token = localStorage.getItem('jwtToken'); // Fetch the JWT token from wherever it's stored (e.g., localStorage)
-    //  console.log("token "+token)
-      const response = 
-      /*await axios.get(`${API_URL}/${siteWebId}/${formId}`, {
-        headers: {
-          'Content-Type': 'application/json',
-      //    'Authorization': `Bearer ${token}`, // Add the JWT token to the Authorization header
-        }
-      });*/
-        console.log("before: ",form);
-        return form;
-    } catch (error) {
-        console.log('Error while calling getOffreByID API ', error);
-        throw error;
-    }
-}
+export const getFormByformIDSiteId = async (siteWebId, formId) => {
+  try {
+    const response = await axios.get(`${API_URL}/${siteWebId}/${formId}`, {
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    });
+    console.log("Calling API with siteWebId:", siteWebId, "and formId:", formId);
+    console.log("Response: ", response.data);
+    return response.data;
+  } catch (error) {
+    console.log('Error while calling getFormByformIDSiteId API ', error);
+    throw error;
+  }
+};
 export const submitForm = async (body, excelFileLink) => {
   const formData = new FormData();
   body.forEach((item, index) => {
@@ -63,12 +59,14 @@ const form = {
           "titre": "titreee",
           "champText": true,
           "imageLink": false,
+          "required":true,
           
         },
         {
           "titre": "titreee",
           "champText": false,
           "imageLink": true,
+          "required":false,
          
         }
       ],

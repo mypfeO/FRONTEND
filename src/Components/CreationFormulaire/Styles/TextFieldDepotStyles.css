@@ -1,21 +1,36 @@
-/* TextFieldDepotStyles.css */
+/* Styles/TextFieldDepotStyles.css */
 
+/* Container for the entire layout */
+.app-container {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  width: 100vw; /* Full viewport width */
+}
+
+/* Container for the form section */
+.form-container {
+  width: 70%; /* Takes up 70% of the viewport width */
+  height: 100%;
+  overflow-y: auto; /* Allows scrolling within the form container */
+}
+
+/* Container for the depot section */
 .depot-container {
-    height: 92vh; /* Définit la hauteur à 100% de la hauteur de la fenêtre */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    opacity: 1;
-    cursor: pointer;
-    background-color: #31708f;
-    border-radius: 5px;
-    padding: 10px;
-    margin-bottom: 20px;
-    transition: opacity 0.3s ease-in-out;
-  }
-  
-  .depot-container.dragging {
-    opacity: 0.5;
-  }
-  
+  width: 30%; /* Takes up the remaining 30% of the viewport width */
+  height: 100%; /* Full height to align with the left container */
+  position: fixed; /* Fixed positioning relative to the viewport */
+  right: 0; /* Align to the right side */
+  top: 0; /* Align to the top */
+  display: flex;
+  flex-direction: column;
+  justify-content: center; /* Center contents vertically */
+  align-items: center; /* Center contents horizontally */
+  background-color: transparent; /* Ensures background is transparent */
+  padding: 10px;
+  transition: opacity 0.3s ease-in-out;
+  box-sizing: border-box; /* Ensures padding is included in width */
+}
+
+.depot-container.dragging {
+  opacity: 0.5; /* Provides visual feedback when dragging */
+}

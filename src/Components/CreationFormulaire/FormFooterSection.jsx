@@ -1,4 +1,5 @@
-// FormFooterSection.jsx
+// src/Components/FormFooterSection.jsx
+
 import React from 'react';
 import { Typography, Paper } from '@mui/material';
 import { useDrop } from 'react-dnd';
@@ -17,12 +18,13 @@ const FormFooterSection = ({ formFooter, setFormFooter }) => {
   return (
     <div className="footer-section-container">
       <Typography variant="h5" className="empty-message">Form Footer</Typography>
-      <div  ref={footerDrop}>
+      <div ref={footerDrop}>
         <Paper className="paper-container">
           {formFooter !== null ? (
             <TextFieldDepot
               value={formFooter}
               onChange={setFormFooter}
+              onDrop={() => {}} // Pass an empty function or handle drop logic
             />
           ) : (
             <div className="empty-message">Drag a text field here for the footer</div>

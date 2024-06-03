@@ -1,23 +1,45 @@
 /* App.css */
 body {
-  margin: 0; /* Supprime les marges par défaut du corps */
-  background-color: #EEF5FF; /* Couleur de fond de la page */
+  margin: 0; /* Removes default margins of the body */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);  /* Background color of the page */
+  
 }
 
 .app-container {
   display: flex;
-  justify-content: space-between;
-  align-items: stretch; /* Ajuster les éléments enfants pour qu'ils remplissent la hauteur */
-  height: 100vh; /* Définir la hauteur sur 100 % de la hauteur de la fenêtre */
-  /* Couleur de fond du conteneur */
+  height: 100vh; /* Sets the height to 100% of the viewport height */
+  /* Corrected property */
 }
 
 .left-component {
-  flex: 1;
-  margin-right: 20px; /* Ajuster la marge entre les composants */
+  flex: 1; /* Allows the component to grow and take up equal space */
+  order: 2; /* Moved visually to the right */
+  margin-left: 20px; /* Adjusts the margin to the left of this component */
+
 }
 
 .right-component {
-  flex: 1;
-  margin-right: 20px; /* Ajuster la marge entre les composants */
+  flex: 1.2; /* Allows this component to take more space */
+  order: 1; /* Moved visually to the left */
+  margin-right: 20px; /* Adjusts the margin to the right of this component */
+  
 }
+/* App.css */
+.depot-container {
+  width: 80%; /* Adjusted to take up 80% of the parent's width */
+  max-height: 60%; /* Reduces the maximum height to 60% of its container */
+  background-color: #744141; /* Set background color to white */
+  padding-left: 50px; /* Padding only on the left */
+  box-sizing: border-box;
+  border-radius: 20px; /* Adds rounded corners */
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds subtle shadow */
+  overflow: hidden; /* Ensures no content spills out */
+
+  /* Centering the container */
+  position: relative; /* Allows for using top/left/right/bottom for positioning */
+  margin: 10% auto; /* Vertical margin and horizontally centered */
+  left: 0; /* Resets any left offset */
+  right: 0; /* Ensures it doesn't push to one side */
+}
+
+

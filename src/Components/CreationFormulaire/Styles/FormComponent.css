@@ -1,22 +1,22 @@
-/* FormComponent.css */
 .form-container {
-   /* Set background color for the entire FormComponent */
-  padding: 20px;
+  padding: 30px;
   box-shadow: 0px 0px 10px rgba(6, 5, 5, 0.1);
-  background-color:#4093bb;
+  background-color: #282c34;
+  border-radius: 50px;
+  margin-right: 50%;
+  margin-top: 30px;
+  padding: 20px;
+  height: 100vh; /* Full height of the viewport */
+  overflow-y: auto;
 }
-/* FormComponent.css */
+
 .MuiPaper-root {
-  background-color:#4093bb !important; /* Set background color for the entire FormComponent */
-} 
-/* FormComponent.css */
-.MuiPaper-root .MuiPaper-root .MuiPaper-root .MuiPaper-root .MuiTypography-root {
-  color: white; /* Set text color to white */
+  background-color: #282c34 !important; /* Set background color for the entire FormComponent */
 }
 
 .paper-container {
   padding: 20px;
-  background-color: #9c9c9c; /* Gray background color for each section */
+  background-color: transparent !important; /* Gray background color for each section */
   border-radius: 10px;
 }
 
@@ -30,15 +30,15 @@
   margin-bottom: 20px;
 }
 
-
 .form-footer-section {
   margin-right: 5px; /* Minimize margin from the right */
   margin-bottom: 20px;
-} 
-  
+}
+
 .submit-button {
   color: #fff; /* White text color for button */
 }
+
 .empty-message {
   color: #ddc3c3; /* Color for the empty message */
   font-style: italic; /* Italicize the text */

@@ -4,66 +4,87 @@ export default makeStyles(() => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
     minHeight: '100vh',
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
-    padding: '0',
+    padding: '20px',
+    backgroundColor: '#f7f7f7',
+  },
+  headerContainer: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '20px',
+  },
+  logo: {
+    maxHeight: '100px',
+    marginRight: '20px',
+  },
+  header: {
+    flexGrow: 1,
+    textAlign: 'center',
+    fontSize: '2.5rem',
+    color: '#333',
+  },
+  productImageContainer: {
+    width: '200px',
+    height: '200px',
+    overflow: 'hidden',
+    borderRadius: '50%',
+    marginBottom: '20px',
+  },
+  productImage: {
+    width: '100%',
+    height: '100%',
+    objectFit: 'cover',
   },
   card: {
-    width: '60%',
+    width: '80%',
     minHeight: '50%',
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     padding: '40px',
-    backgroundColor: '#282c34',
-    color: '#fff',
+    backgroundColor: '#fff',
+    color: '#000',
     borderRadius: '25px',
     boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
     boxSizing: 'border-box',
   },
-  header: {
+  inputCard: {
     width: '100%',
-    textAlign: 'center',
-    margin: '40px 0',
-    fontSize: '2.5rem',
+    marginBottom: '20px',
+    backgroundColor: '#f9f9f9',
   },
-  inputBox: {
-    width: '100%',
-    margin: '30px 0',
+  inputTitle: {
+    marginBottom: '10px',
+    fontWeight: 'bold',
   },
   input: {
     width: '100%',
-    padding: '12px',
-    color: '#fff',
-    background: 'rgba(255, 255, 255, 0.1)',
-    borderBottom: '2px solid #fff',
-    '&::placeholder': {
-      color: '#aaa',
-    },
-    '& .MuiInputBase-input': {
-      color: '#fff',
-    },
+    marginBottom: '20px',
   },
-  imageInput: { // Custom style for image input fields
-    width: '80%', // Custom width for image inputs
-    margin: '0 auto', // Centering the input field
+  fileInputContainer: {
+    width: '100%',
+    marginBottom: '20px',
+  },
+  fileInput: {
+    width: '100%',
     padding: '10px',
-    background: 'rgba(255, 255, 255, 0.05)', // Slightly different background to distinguish
-    '&::file-selector-button': { // Style for the file selector button if necessary
-      padding: '10px',
-      backgroundColor: '#666',
-      color: '#fff',
-      borderRadius: '5px',
-      margin: '5px',
-      cursor: 'pointer',
-    }
+    background: '#f0f0f0',
+    borderRadius: '5px',
+  },
+  mediaContainer: {
+    width: '100%',
+    marginTop: '20px',
+  },
+  media: {
+    width: '100%',
   },
   submitButton: {
     width: '100%',
     padding: '16px 0',
-    margin: '40px 0',
+    marginTop: '40px',
     fontSize: '1.25rem',
     backgroundColor: '#4caf50',
     '&:hover': {
@@ -79,9 +100,5 @@ export default makeStyles(() => ({
     marginTop: '20px',
     color: 'red',
     textAlign: 'center',
-  },
-  image: {
-    maxWidth: '100%',
-    marginTop: '30px',
   },
 }));

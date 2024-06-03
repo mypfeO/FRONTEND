@@ -1,0 +1,36 @@
+/* src/Components/Styles/SubmissionModalStyles.css */
+
+.modal-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 400px;
+  max-height: 90vh; /* Ensure the modal doesn't exceed the viewport height */
+  background-color: #223f6c;
+  border: 2px solid #000;
+  box-shadow: 24px;
+  padding: 20px;
+  border-radius: 10px;
+  overflow-y: auto; /* Add vertical scrollbar */
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 20px;
+}
+
+.file-input {
+  margin-top: 10px;
+  width: 100%;
+  color: #fff;
+}
+
+.modal-field {
+  margin-top: 20px;
+}
+
+.color-picker {
+  margin-top: 10px;
+}

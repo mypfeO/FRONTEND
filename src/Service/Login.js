@@ -4,7 +4,7 @@ export const API_URL = "http://localhost:5027/gateway/auth/api/auth";
 
 
 
-export const login = async (username, Password) => {
+ const login = async (username, Password) => {
   try {
     const response = await axios.post(`${API_URL}/login`, { username, Password }, {
       headers: {
@@ -25,3 +25,4 @@ export const login = async (username, Password) => {
     throw error;
   }
 };
+export default login;

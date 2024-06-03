@@ -4,7 +4,7 @@ import { styled } from '@mui/system';
 const DepotContainer = styled('div')({
   opacity: 1,
   cursor: 'pointer',
-  backgroundColor: '#31708f',
+  backgroundColor: 'transparent',
   borderRadius: '10px',
   padding: '20px',
   marginBottom: '20px',

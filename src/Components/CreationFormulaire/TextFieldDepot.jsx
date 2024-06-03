@@ -1,9 +1,11 @@
+// src/Components/TextFieldDepot.jsx
+
 import React, { useState, useEffect } from 'react';
 import { TextField } from '@mui/material';
 import { useDrag } from 'react-dnd';
 import DepotContainer from './Styles/TextFieldDepotStyles'; // Import the styles
 
-const TextFieldDepot = ({ onDrop, id, value = '', onChange, title }) => {
+const TextFieldDepot = ({ onDrop, value = '', onChange, title }) => {
   const [inputText, setInputText] = useState(value);
 
   const [{ isDragging }, drag] = useDrag(() => ({
@@ -26,16 +28,10 @@ const TextFieldDepot = ({ onDrop, id, value = '', onChange, title }) => {
     onChange(textValue);
   };
 
-  const handleDrop = () => {
-    onDrop(inputText);
-    setInputText('');
-  };
-
   return (
     <DepotContainer 
       elevation={3} 
       className={`${isDragging ? 'dragging' : ''}`}
-      onClick={handleDrop}
     >
       <TextField 
         variant="outlined" 

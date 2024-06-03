@@ -1,7 +1,7 @@
 import React from 'react';
 import { TextField, Button, Grid, Typography } from "@mui/material";
 import bcrypt from 'bcryptjs';
-import { login } from '../../Service/Login';
+import  login  from '../../Service/Login';
 import { useStyles } from './LoginFormStyles';
 
 const LoginForm = () => {

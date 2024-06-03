@@ -1,39 +1,55 @@
+// FormDataFetcher.jsx
 import React, { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { getFormByformIDSiteId, submitForm } from '../../Service/SubmitionForm';
-import { Button, TextField, Typography, Box, CircularProgress } from '@mui/material';
+import { Button, TextField, Typography, Box, CircularProgress, Card, CardContent } from '@mui/material';
 import useStyles from './styles';
+import ReactGA from 'react-ga';
 
 const FormDataFetcher = () => {
   const classes = useStyles();
-  const [formData, setFormData] = useState({ body: [], footer: {}, head: {} });
+  const { siteWebId, formId } = useParams(); // Get siteWebId and formId from URL
+  const [formData, setFormData] = useState({ body: [], footer: {}, head: {}, design: {} });
   const [submitBody, setSubmitBody] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [excelFileLink, setExcelFileLink] = useState("");
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  useEffect(() => {
+    // Track page view
+    ReactGA.pageview(window.location.pathname + window.location.search);
+
+    fetchFormData();
+  }, [siteWebId, formId]); // Re-fetch form data if siteWebId or formId changes
 
   const fetchFormData = async () => {
     setLoading(true);
     try {
-      const response = await getFormByformIDSiteId('660d430dcd246c7eb48790f9', '661cf9017950228549595edc');
+      const response = await getFormByformIDSiteId(siteWebId, formId);
       console.log("Received data:", response);
       const data = response.formulaire;
       setFormData({
         body: data.body || [],
         footer: data.footer || {},
-        head: data.head || {}
+        head: data.head || {},
+        design: response.design || {}
       });
       setExcelFileLink(response.excelFileLink);
     } catch (error) {
       console.error('Fetch error:', error);
       setError('Failed to load form data');
+
+      // Track error event
+      ReactGA.event({
+        category: 'Error',
+        action: 'Fetch Form Data',
+        label: error.message
+      });
     } finally {
       setLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchFormData();
-  }, []);
 
   useEffect(() => {
     const initialSubmitBody = formData.body.map(item => ({
@@ -45,10 +61,27 @@ const FormDataFetcher = () => {
     setSubmitBody(initialSubmitBody);
   }, [formData.body]);
 
+  useEffect(() => {
+    if (formData.design && formData.design.productImages) {
+      const timer = setInterval(() => {
+        setCurrentImageIndex(prevIndex => (prevIndex + 1) % formData.design.productImages.length);
+      }, 3000); // Change image every 3 seconds
+
+      return () => clearInterval(timer);
+    }
+  }, [formData.design]);
+
   const handleInputChange = (index, value) => {
     const updatedSubmitBody = [...submitBody];
     updatedSubmitBody[index].RespenseText = value;
     setSubmitBody(updatedSubmitBody);
+
+    // Track input change event
+    ReactGA.event({
+      category: 'Form Interaction',
+      action: 'Text Input Change',
+      label: `Input field at index ${index}`
+    });
   };
 
   const handleFileChange = (index, event) => {
@@ -57,8 +90,15 @@ const FormDataFetcher = () => {
       const updatedSubmitBody = [...submitBody];
       updatedSubmitBody[index].RespenseFile = file;
       setSubmitBody(updatedSubmitBody);
+
+      // Track file upload event
+      ReactGA.event({
+        category: 'Form Interaction',
+        action: 'File Upload',
+        label: `File uploaded at index ${index}`
+      });
     } else {
-      alert("Please upload a valid image file.");
+      alert("Please upload a valid file.");
     }
   };
 
@@ -76,6 +116,14 @@ const FormDataFetcher = () => {
 
     console.log('Submission Data:', submissionData);
     await submitForm(submissionData.Body, submissionData.ExcelFileLink);
+
+    // Track form submission event
+    ReactGA.event({
+      category: 'Form Interaction',
+      action: 'Form Submit',
+      label: 'Form submitted successfully'
+    });
+
     alert('Form submitted. Check the console for data.');
   };
 
@@ -87,32 +135,73 @@ const FormDataFetcher = () => {
   }
 
   return (
-    <Box className={classes.root}>
-      <Box className={classes.card}>
+    <Box className={classes.root} style={{ backgroundColor: formData.design?.backgroundColor }}>
+      <Box className={classes.headerContainer}>
+        {formData.design?.logo && (
+          <img src={formData.design.logo} alt="Logo" className={classes.logo} />
+        )}
         <Typography variant="h4" className={classes.header}>{formData.head.title}</Typography>
+      </Box>
+      {formData.design?.productImages && formData.design.productImages.length > 0 && (
+        <Box className={classes.productImageContainer}>
+          <img
+            src={formData.design.productImages[currentImageIndex]}
+            alt="Product"
+            className={classes.productImage}
+          />
+        </Box>
+      )}
+      <Box className={classes.card}>
         <form onSubmit={handleSubmit}>
           {submitBody.map((item, index) => (
-            <Box key={index} className={classes.inputBox}>
-              <Typography variant="h6">{item.Titre}</Typography>
-              {formData.body[index].champText && (
-                <TextField
-                  fullWidth
-                  variant="outlined"
-                  placeholder="Your Response"
-                  value={item.RespenseText}
-                  onChange={(e) => handleInputChange(index, e.target.value)}
-                  className={classes.input}
-                />
-              )}
-              {item.ImageLink && (
-                <input
-                  accept=".jpg, .png"
-                  type="file"
-                  onChange={(e) => handleFileChange(index, e)}
-                  className={classes.input}
-                />
-              )}
-            </Box>
+            <Card key={index} className={classes.inputCard}>
+              <CardContent>
+                <Typography variant="h6" className={classes.inputTitle}>{item.Titre}</Typography>
+                {formData.body[index].type === 'text' && (
+                  <TextField
+                    fullWidth
+                    variant="outlined"
+                    placeholder="Your Response"
+                    value={item.RespenseText}
+                    onChange={(e) => handleInputChange(index, e.target.value)}
+                    className={classes.input}
+                  />
+                )}
+                {formData.body[index].type === 'video' && (
+                  <Box className={classes.mediaContainer}>
+                    <video controls className={classes.media}>
+                      <source src={formData.body[index].respenseText} type="video/mp4" />
+                      Your browser does not support the video tag.
+                    </video>
+                  </Box>
+                )}
+                {formData.body[index].type === 'image' && (
+                  <Box className={classes.mediaContainer}>
+                    <img src={formData.body[index].respenseText} alt={item.Titre} className={classes.media} />
+                  </Box>
+                )}
+                {formData.body[index].type === 'socle video' && (
+                  <Box className={classes.fileInputContainer}>
+                    <input
+                      accept="video/*"
+                      type="file"
+                      onChange={(e) => handleFileChange(index, e)}
+                      className={classes.fileInput}
+                    />
+                  </Box>
+                )}
+                {formData.body[index].type === 'socle image' && (
+                  <Box className={classes.fileInputContainer}>
+                    <input
+                      accept="image/*"
+                      type="file"
+                      onChange={(e) => handleFileChange(index, e)}
+                      className={classes.fileInput}
+                    />
+                  </Box>
+                )}
+              </CardContent>
+            </Card>
           ))}
           <Button
             fullWidth
