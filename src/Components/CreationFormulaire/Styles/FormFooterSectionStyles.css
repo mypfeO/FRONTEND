@@ -1,7 +1,5 @@
-/* src/Components/Styles/FormFooterSectionStyles.css */
-
 .footer-section-container {
-  background-color: #223f6c; /* Background color */
+  background-color: #223f6c;
   padding: 20px;
 }
 
@@ -10,24 +8,25 @@
   border: 2px dashed rgb(36, 30, 30);
 }
 
+.footer-item {
+  display: flex;
+  align-items: center; /* Align items vertically centered */
+  gap: 10px; /* Add space between elements */
+}
+
+.custom-text-field {
+  flex: 1; /* Make text fields take equal space */
+}
+
 .empty-message {
-  color: #ffffff; /* Color for the empty message */
-  font-style: italic; /* Italicize the text */
+  color: #ffffff;
+  font-style: italic;
 }
 
-.custom-text-field .MuiInputBase-input {
-  color: #fff; /* White text color */
+.footer-item .MuiTextField-root {
+  flex: 1; /* Ensure the text fields expand to take up available space */
 }
 
-.custom-text-field .MuiOutlinedInput-root {
-  background-color: rgba(255, 255, 255, 0.1); /* Semi-transparent background */
-  border-radius: 5px;
-}
-
-.custom-text-field .MuiOutlinedInput-notchedOutline {
-  border-color: #fff; /* White border color */
-}
-
-.custom-text-field .MuiInputLabel-root {
-  color: #aaa; /* Placeholder text color */
+.footer-item .MuiIconButton-root {
+  flex: 0; /* Ensure the delete button does not grow */
 }

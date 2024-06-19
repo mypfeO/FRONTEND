@@ -19,7 +19,7 @@ const PageList = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [currentPage, setCurrentPage] = useState(null);
   const navigate = useNavigate();
-  const adminId = "65e9fa2e21431808d2448065";  // Replace with actual admin ID
+  const adminId = localStorage.getItem('userId');  // Replace with actual admin ID
 
   useEffect(() => {
     const fetchData = async () => {
@@ -89,7 +89,8 @@ const PageList = () => {
 
   const handleUpdatePage = async (updatedPage) => {
     try {
-      const response = await updatePage(currentPage.id, { ...updatedPage, id: currentPage.id, admin: adminId });
+      console.log("ELI", updatedPage);
+      const response = await updatePage(updatedPage);
       const fetchedPages = await getPagesByAdmin(adminId);
       setPages(fetchedPages);
       handleCloseUpdateModal();
@@ -175,33 +176,33 @@ const PageList = () => {
           adminId={adminId}
         />
       )}
-    <Dialog
+      <Dialog
            open={deleteDialogOpen}
            onClose={handleCloseDeleteDialog}
            PaperProps={{
              style: {
-      backgroundColor: 'white', // Set the background color to white
-      padding: '20px',
-      width: '600px', // Make the dialog wider
-      color: 'white',
-    },
-  }}
->
-  <DialogTitle>Confirm Delete</DialogTitle>
-  <DialogContent>
-    <DialogContentText style={{ color: 'white' }}>
-      Are you sure you want to delete this page?
-    </DialogContentText>
-  </DialogContent>
-  <DialogActions>
-    <Button onClick={handleCloseDeleteDialog} style={{ color: '#bdbde7' }}>
-      Cancel
-    </Button>
-    <Button onClick={handleDeletePage} style={{ color: 'red' }}>
-      Delete
-    </Button>
-  </DialogActions>
-</Dialog>
+               backgroundColor: 'white',
+               padding: '20px',
+               width: '600px',
+               color: 'white',
+             },
+           }}
+      >
+        <DialogTitle>Confirm Delete</DialogTitle>
+        <DialogContent>
+          <DialogContentText style={{ color: 'white' }}>
+            Are you sure you want to delete this page?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleCloseDeleteDialog} style={{ color: '#bdbde7' }}>
+            Cancel
+          </Button>
+          <Button onClick={handleDeletePage} style={{ color: 'red' }}>
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
       <Snackbar
         open={Boolean(successMessage)}
         message={successMessage}

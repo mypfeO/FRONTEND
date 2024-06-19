@@ -1,8 +1,9 @@
 import React from 'react';
 import { Modal, Box, Typography, Button, TextField } from '@mui/material';
 import './Styles/ResultModalStyles.css';
+import { Navigate } from 'react-router-dom';
 
-const ResultModal = ({ open, handleClose, result }) => {
+const ResultModal = ({ open, handleClose, result,formId,siteWebId }) => {
   const handleCopy = () => {
     if (result && result.formUrl) {
       navigator.clipboard.writeText(result.formUrl);
@@ -11,6 +12,11 @@ const ResultModal = ({ open, handleClose, result }) => {
       alert('Form URL is not available to copy.');
     }
   };
+
+  const handlePreview = () => {
+    
+      Navigate(`/preview-form/${siteWebId}/${formId}`);
+    } 
 
   return (
     <Modal
@@ -42,6 +48,9 @@ const ResultModal = ({ open, handleClose, result }) => {
           </Button>
           <Button onClick={handleClose} variant="contained" color="secondary" style={{ marginLeft: '10px' }}>
             Close
+          </Button>
+          <Button onClick={handlePreview} variant="contained" color="primary">
+            Preview form
           </Button>
         </Box>
       </Box>

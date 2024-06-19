@@ -10,27 +10,37 @@ import ResultModal from './ResultModal';
 import { normalizeData, constructPayload } from './utils';
 import './Styles/FormComponent.css';
 import { v4 as uuidv4 } from 'uuid';
-import { createFormulaire } from '../../Service/Forms';
+import { createFormulaire, updateFormulaire } from '../../Service/Forms';
 
-const FormComponent = ({ formData }) => {
-  const [formTitle, setFormTitle] = useState(null);
-  const [formFooter, setFormFooter] = useState(null);
+const FormComponent = ({ formData, formId, siteWebId }) => {
+  const [formTitle, setFormTitle] = useState('');
+  const [formFooter, setFormFooter] = useState([]);
   const [bodyItems, setBodyItems] = useState([]);
   const [modalOpen, setModalOpen] = useState(false);
   const [resultModalOpen, setResultModalOpen] = useState(false);
   const [result, setResult] = useState(null);
   const [design, setDesign] = useState({
     backgroundColor: '#ffffff',
-    productsImages: [],
+    productImages: [],
     logo: null,
-    excelFileLink: ''
+    excelFileLink: '',
+    codeBoard: ''
   });
 
   useEffect(() => {
     if (formData) {
       if (formData.head) setFormTitle(formData.head.title);
-      if (formData.footer) setFormFooter(formData.footer.titre);
+      if (formData.footer) setFormFooter(formData.footer);
       if (formData.body) setBodyItems(normalizeData(formData.body));
+      if (formData.design) {
+        setDesign({
+          backgroundColor: formData.design.backgroundColor || '#ffffff',
+          productImages: formData.design.productImages || [],
+          logo: formData.design.logo || null,
+          excelFileLink: formData.excelFileLink || '',
+          codeBoard: formData.codeBoard || ''
+        });
+      }
     }
   }, [formData]);
 
@@ -69,32 +79,45 @@ const FormComponent = ({ formData }) => {
     });
   };
 
-  const handleFormSubmit = async (design) => {
-    const payload = constructPayload(formTitle, formFooter, bodyItems, design);
-    console.log("Data submission payload: ", payload); // Log the payload directly
+ 
+  const handleFormSubmit = async (updatedDesign) => {
+    console.log('updatedDesignddddddddd:', updatedDesign);
+    const payload = constructPayload(formTitle, formFooter, bodyItems, updatedDesign, siteWebId);
+    console.log("Data submission payload: ", payload);
+
     try {
-      const response = await createFormulaire(payload);
-      console.log('Formulaire created successfully:', response);
+      let response;
+
+      // Check if formId exists for updating, otherwise create a new form
+      if (formId) {
+        response = await updateFormulaire(payload, formId);
+        console.log('Formulaire updated successfully:', response);
+      } else {
+        response = await createFormulaire(payload);
+        console.log('Formulaire created successfully:', response);
+      }
       setResult(response);
       setResultModalOpen(true);
       resetForm();
     } catch (error) {
-      console.error('Error creating formulaire:', error);
-      setResult({ Message: 'Error creating formulaire', formUrl: '' });
+      console.error('Error creating/updating formulaire:', error);
+      setResult({ Message: 'Error creating/updating formulaire', formUrl: '' });
       setResultModalOpen(true);
     }
     setModalOpen(false);
   };
 
+
   const resetForm = () => {
-    setFormTitle(null);
-    setFormFooter(null);
+    setFormTitle('');
+    setFormFooter([]);
     setBodyItems([]);
     setDesign({
       backgroundColor: '#ffffff',
-      productsImages: [],
+      productImages: [],
       logo: null,
-      excelFileLink: ''
+      excelFileLink: '',
+      codeBoard: ''
     });
   };
 
@@ -110,7 +133,8 @@ const FormComponent = ({ formData }) => {
     <Grid container spacing={3} className="form-container">
       <Grid item xs={12}>
         <Typography variant="h4" align="center" gutterBottom className="empty-message">
-          Create a Form
+          {console.log('Form data:', formData)}
+          {formData ? 'Edit Form' : 'Create Form'}
         </Typography>
       </Grid>
       <Grid item xs={12} className="form-title-section">
@@ -137,18 +161,21 @@ const FormComponent = ({ formData }) => {
       </Grid>
       <Grid item xs={12}>
         <Button type="submit" variant="contained" color="primary" fullWidth onClick={openModal}>
-          Submit
+          {formData ? 'Update' : 'Submit'}
         </Button>
       </Grid>
       <SubmissionModal
         open={modalOpen}
         handleClose={handleCloseModal}
         handleSubmit={handleFormSubmit}
+        initialDesign={design}
       />
       <ResultModal
         open={resultModalOpen}
         handleClose={handleCloseResultModal}
         result={result}
+        siteWebId={siteWebId}
+        formId={formId}
       />
     </Grid>
   );

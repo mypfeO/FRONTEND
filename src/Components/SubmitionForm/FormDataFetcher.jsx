@@ -1,46 +1,44 @@
-// FormDataFetcher.jsx
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { getFormByformIDSiteId, submitForm } from '../../Service/SubmitionForm';
-import { Button, TextField, Typography, Box, CircularProgress, Card, CardContent } from '@mui/material';
+import { Button, TextField, Typography, Box, CircularProgress, Card, CardContent, Link, IconButton } from '@mui/material';
 import useStyles from './styles';
-import ReactGA from 'react-ga';
+import ReactGA from 'react-ga4';
+import { encodeFileToBase64 } from '../CreationFormulaire/utils';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const FormDataFetcher = () => {
   const classes = useStyles();
-  const { siteWebId, formId } = useParams(); // Get siteWebId and formId from URL
-  const [formData, setFormData] = useState({ body: [], footer: {}, head: {}, design: {} });
-  const [submitBody, setSubmitBody] = useState([]);
+  const { siteWebId, formId } = useParams();
+  const [formData, setFormData] = useState({ body: [], footer: [], head: {}, design: {} });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [excelFileLink, setExcelFileLink] = useState("");
+  const [responses, setResponses] = useState({});
+  const [fileResponses, setFileResponses] = useState({});
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [comments, setComments] = useState({}); // State to store comments
+  const commentInputRefs = useRef({});
 
   useEffect(() => {
-    // Track page view
-    ReactGA.pageview(window.location.pathname + window.location.search);
-
+    ReactGA.send({ hitType: "pageview", page: window.location.pathname + window.location.search });
     fetchFormData();
-  }, [siteWebId, formId]); // Re-fetch form data if siteWebId or formId changes
+  }, [siteWebId, formId]);
 
   const fetchFormData = async () => {
     setLoading(true);
     try {
       const response = await getFormByformIDSiteId(siteWebId, formId);
-      console.log("Received data:", response);
       const data = response.formulaire;
       setFormData({
         body: data.body || [],
-        footer: data.footer || {},
+        footer: data.footer || [],
         head: data.head || {},
-        design: response.design || {}
+        design: response.design || {},
       });
       setExcelFileLink(response.excelFileLink);
     } catch (error) {
-      console.error('Fetch error:', error);
       setError('Failed to load form data');
-
-      // Track error event
       ReactGA.event({
         category: 'Error',
         action: 'Fetch Form Data',
@@ -52,31 +50,16 @@ const FormDataFetcher = () => {
   };
 
   useEffect(() => {
-    const initialSubmitBody = formData.body.map(item => ({
-      Titre: item.titre,
-      ImageLink: item.imageLink,
-      RespenseFile: undefined,
-      RespenseText: ''
-    }));
-    setSubmitBody(initialSubmitBody);
-  }, [formData.body]);
-
-  useEffect(() => {
     if (formData.design && formData.design.productImages) {
       const timer = setInterval(() => {
         setCurrentImageIndex(prevIndex => (prevIndex + 1) % formData.design.productImages.length);
-      }, 3000); // Change image every 3 seconds
-
+      }, 3000);
       return () => clearInterval(timer);
     }
   }, [formData.design]);
 
   const handleInputChange = (index, value) => {
-    const updatedSubmitBody = [...submitBody];
-    updatedSubmitBody[index].RespenseText = value;
-    setSubmitBody(updatedSubmitBody);
-
-    // Track input change event
+    setResponses(prev => ({ ...prev, [index]: value }));
     ReactGA.event({
       category: 'Form Interaction',
       action: 'Text Input Change',
@@ -87,19 +70,35 @@ const FormDataFetcher = () => {
   const handleFileChange = (index, event) => {
     const file = event.target.files[0];
     if (file) {
-      const updatedSubmitBody = [...submitBody];
-      updatedSubmitBody[index].RespenseFile = file;
-      setSubmitBody(updatedSubmitBody);
-
-      // Track file upload event
-      ReactGA.event({
-        category: 'Form Interaction',
-        action: 'File Upload',
-        label: `File uploaded at index ${index}`
+      encodeFileToBase64(file).then((base64) => {
+        setFileResponses(prev => ({ ...prev, [index]: base64 }));
+        ReactGA.event({
+          category: 'Form Interaction',
+          action: 'File Upload',
+          label: `File uploaded at index ${index}`
+        });
+      }).catch(error => {
+        console.error('Error encoding file to base64:', error);
+        alert('Failed to upload file. Please try again.');
       });
     } else {
       alert("Please upload a valid file.");
     }
+  };
+
+  const handleAddComment = (index, comment) => {
+    if (comment.trim()) {
+      setComments(prev => ({ ...prev, [index]: [...(prev[index] || []), { user: 'Anonymous', text: comment }] }));
+      // Clear input without scrolling down
+      commentInputRefs.current[index].value = '';
+    }
+  };
+
+  const handleDeleteComment = (index, commentIndex) => {
+    setComments(prev => ({
+      ...prev,
+      [index]: prev[index].filter((_, i) => i !== commentIndex)
+    }));
   };
 
   const handleSubmit = async (event) => {
@@ -109,15 +108,20 @@ const FormDataFetcher = () => {
       return;
     }
 
+    const submissionBody = formData.body.map((item, index) => ({
+      titre: item.titre,
+      type: item.type,
+      respenseBase64: item.type === 'socle image' || item.type === 'socle video' ? fileResponses[index] || '' : '',
+      respenseText: item.type === 'text' ? responses[index] || '' : ''
+    }));
+
     const submissionData = {
-      Body: submitBody,
-      ExcelFileLink: excelFileLink,
+      body: submissionBody,
+      excelFileLink: excelFileLink,
     };
 
     console.log('Submission Data:', submissionData);
-    await submitForm(submissionData.Body, submissionData.ExcelFileLink);
-
-    // Track form submission event
+    await submitForm(submissionData.body, submissionData.excelFileLink);
     ReactGA.event({
       category: 'Form Interaction',
       action: 'Form Submit',
@@ -127,80 +131,78 @@ const FormDataFetcher = () => {
     alert('Form submitted. Check the console for data.');
   };
 
-  if (loading) {
-    return <Box className={classes.center}><CircularProgress /></Box>;
-  }
-  if (error) {
-    return <Typography className={classes.error}>{`Error: ${error}`}</Typography>;
-  }
+  const handleImageError = (index) => {
+    ReactGA.event({
+      category: 'Error',
+      action: 'Image Load Error',
+      label: `Image failed to load at index ${index}`
+    });
+  };
 
   return (
-    <Box className={classes.root} style={{ backgroundColor: formData.design?.backgroundColor }}>
-      <Box className={classes.headerContainer}>
+    <Box className={classes.root}>
+
+      <Box className={classes.card} style={{ backgroundColor: formData.design.backgroundColor || '#ffffff' }}>
         {formData.design?.logo && (
-          <img src={formData.design.logo} alt="Logo" className={classes.logo} />
+          <img src={formData.design.logo} alt="Logo" className={classes.logoInCard} />
         )}
-        <Typography variant="h4" className={classes.header}>{formData.head.title}</Typography>
-      </Box>
-      {formData.design?.productImages && formData.design.productImages.length > 0 && (
-        <Box className={classes.productImageContainer}>
-          <img
-            src={formData.design.productImages[currentImageIndex]}
-            alt="Product"
-            className={classes.productImage}
-          />
-        </Box>
-      )}
-      <Box className={classes.card}>
+        {formData.design?.productImages && formData.design.productImages.length > 0 && (
+          <Box className={classes.productImageContainerInCard}>
+            <img
+              src={formData.design.productImages[currentImageIndex]}
+              alt="Product"
+              className={classes.productImage}
+              onError={() => handleImageError(currentImageIndex)}
+            />
+          </Box>
+        )}
+        <Typography variant="h4" className={classes.formTitle}>{formData.head.title}</Typography>
         <form onSubmit={handleSubmit}>
-          {submitBody.map((item, index) => (
-            <Card key={index} className={classes.inputCard}>
+          {formData.body.map((item, index) => (
+            <Card key={index} className={classes.inputCard} style={{ backgroundColor: formData.design?.backgroundColor || '#f9f9f9' }}>
               <CardContent>
-                <Typography variant="h6" className={classes.inputTitle}>{item.Titre}</Typography>
-                {formData.body[index].type === 'text' && (
+                <Typography variant="h6" className={classes.inputTitle}>{item.titre}</Typography>
+                {item.type === 'text' && (
                   <TextField
                     fullWidth
                     variant="outlined"
                     placeholder="Your Response"
-                    value={item.RespenseText}
+                    value={responses[index] || ''}
                     onChange={(e) => handleInputChange(index, e.target.value)}
                     className={classes.input}
                   />
                 )}
-                {formData.body[index].type === 'video' && (
+                {item.type === 'video' && (
                   <Box className={classes.mediaContainer}>
                     <video controls className={classes.media}>
-                      <source src={formData.body[index].respenseText} type="video/mp4" />
+                      <source src={responses[index] || item.respenseText} type="video/mp4" />
                       Your browser does not support the video tag.
                     </video>
                   </Box>
                 )}
-                {formData.body[index].type === 'image' && (
+                {item.type === 'image' && (
                   <Box className={classes.mediaContainer}>
-                    <img src={formData.body[index].respenseText} alt={item.Titre} className={classes.media} />
+                    <img
+                      src={responses[index] || item.respenseText}
+                      alt={item.titre}
+                      className={classes.media}
+                      onError={() => handleImageError(index)}
+                    />
                   </Box>
                 )}
-                {formData.body[index].type === 'socle video' && (
+                {(item.type === 'socle video' || item.type === 'socle image') && (
                   <Box className={classes.fileInputContainer}>
                     <input
-                      accept="video/*"
+                      accept={item.type === 'socle video' ? 'video/*' : 'image/*'}
                       type="file"
                       onChange={(e) => handleFileChange(index, e)}
                       className={classes.fileInput}
                     />
                   </Box>
                 )}
-                {formData.body[index].type === 'socle image' && (
-                  <Box className={classes.fileInputContainer}>
-                    <input
-                      accept="image/*"
-                      type="file"
-                      onChange={(e) => handleFileChange(index, e)}
-                      className={classes.fileInput}
-                    />
-                  </Box>
-                )}
-              </CardContent>
+                {/* Comments Section for each form element */}
+                
+           </CardContent>
             </Card>
           ))}
           <Button
@@ -209,12 +211,54 @@ const FormDataFetcher = () => {
             variant="contained"
             className={classes.submitButton}
           >
-            {formData.footer.titre}
+            Submit
           </Button>
         </form>
+        <Box className={classes.footerLinksContainer}>
+          {formData.footer.map((item, index) => (
+            <Link
+              key={index}
+              href={item.linkNextForm}
+              target="_blank"
+              rel="noopener noreferrer"
+              className={classes.footerLink}
+            >
+              {item.titre}
+            </Link>
+          ))}
+        </Box>
+      </Box>
+      <Box className={classes.headerContainer}>
+        {/* Comment Section */}
+        <Box className={classes.commentSection}>
+          <Typography variant="h5" className={classes.commentHeader}>Comments</Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Add a comment"
+            className={classes.commentInput}
+            inputRef={(el) => commentInputRefs.current['global'] = el}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                handleAddComment('global', e.target.value);
+              }
+            }}
+          />
+          {comments['global'] && comments['global'].map((comment, i) => (
+            <Box key={i} className={classes.comment}>
+              <Typography variant="body2" className={classes.commentUser}>{comment.user}:</Typography>
+              <Typography variant="body2" className={classes.commentText}>{comment.text}</Typography>
+              <IconButton size="small" onClick={() => handleDeleteComment('global', i)} className={classes.deleteButton}>
+                <DeleteIcon fontSize="small" />
+              </IconButton>
+            </Box>
+          ))}
+        </Box>
       </Box>
     </Box>
   );
 };
 
 export default FormDataFetcher;
+

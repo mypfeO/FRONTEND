@@ -32,7 +32,7 @@ body {
   padding-left: 50px; /* Padding only on the left */
   box-sizing: border-box;
   border-radius: 20px; /* Adds rounded corners */
-  box-shadow: 0 4px 8px rgba(0,0,0,0.1); /* Adds subtle shadow */
+  box-shadow: 0 4px 8px rgba(255, 0, 0, 0.1); /* Adds subtle shadow */
   overflow: hidden; /* Ensures no content spills out */
 
   /* Centering the container */

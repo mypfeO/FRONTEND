@@ -1,35 +1,29 @@
 import React, { useState } from 'react';
-import { TextField, Button, Grid } from "@mui/material";
-import { useStyles } from './SignUpFormStyles'; // Importez useStyles de votre nouveau fichier
+import { TextField, Button, Grid, Snackbar, Alert } from "@mui/material";
+import { useStyles } from './SignUpFormStyles';
+import { register } from '../../Service/Login';
 
-const SignUpForm = ({ onSubmit }) => {
-  const classes = useStyles(); // Utilisez useStyles pour accéder à vos styles
+const SignUpForm = ({ onSuccess }) => {
+  const classes = useStyles();
   const [formData, setFormData] = useState({
     username: '',
-    email: '',
     password: '',
     confirmPassword: '',
   });
   const [errors, setErrors] = useState({});
-
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
   };
 
   const handleSubmit = async (event) => {
-    event.preventDefault(); // Prevent default form submission behavior
+    event.preventDefault();
+    setErrors({}); // Clear previous errors
 
     // Validate username
     if (!/^[a-zA-Z]+$/.test(formData.username) || formData.username.length < 6) {
       setErrors({ username: 'Username must be at least 6 characters long and contain only letters.' });
-      return;
-    }
-
-    // Validate email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      setErrors({ email: 'Invalid email address.' });
       return;
     }
 
@@ -39,17 +33,29 @@ const SignUpForm = ({ onSubmit }) => {
       return;
     }
 
-    // Validate password confirmation
+    // Check password confirmation
     if (formData.password !== formData.confirmPassword) {
       setErrors({ confirmPassword: 'Passwords do not match.' });
       return;
     }
 
-    // Hash the password
-    const hashedPassword = await hash(formData.password, 10); // Hash the password
+    // Attempt to register the user
+    try {
+      await register(formData.username, formData.password);
+      setSuccess(true);
 
-    // Call the onSubmit function with form data and hashed password
-    onSubmit({ ...formData, password: hashedPassword });
+      // Redirect to login form after 2 seconds
+      setTimeout(() => {
+        setSuccess(false);
+        if (onSuccess) onSuccess(); // Execute onSuccess callback
+      }, 2000);
+    } catch (error) {
+      setErrors({ general: error.message });
+    }
+  };
+
+  const handleCloseSnackbar = () => {
+    setSuccess(false);
   };
 
   const text = 'SIGNUP';
@@ -63,7 +69,6 @@ const SignUpForm = ({ onSubmit }) => {
   };
 
   return (
-    
     <Grid container justifyContent="center">
       <Grid item xs={12} sm={12} md={9} className={classes.formContainer}>
         <div className={classes.letterContainer}>
@@ -97,20 +102,6 @@ const SignUpForm = ({ onSubmit }) => {
             margin="normal"
             required
             fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={!!errors.email}
-            helperText={errors.email}
-          />
-          <TextField
-            variant="outlined"
-            margin="normal"
-            required
-            fullWidth
             name="password"
             label="Password"
             type="password"
@@ -133,22 +124,42 @@ const SignUpForm = ({ onSubmit }) => {
             onChange={handleChange}
             error={!!errors.confirmPassword}
             helperText={errors.confirmPassword}
-            />
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              color="primary"
-              className={classes.button}
-            >
-              Sign Up
-            </Button>
-          </form>
-        </Grid>
+          />
+          {errors.general && (
+            <Alert severity="error">{errors.general}</Alert>
+          )}
+          <Button
+            type="submit"
+            fullWidth
+            variant="contained"
+            color="primary"
+            className={classes.button}
+          >
+            Sign Up
+          </Button>
+        </form>
+        <Snackbar
+          open={success}
+          autoHideDuration={2000}
+          onClose={handleCloseSnackbar}
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        >
+          <Alert 
+            onClose={handleCloseSnackbar} 
+            severity="success" 
+            sx={{ 
+              width: '100%', 
+              bgcolor: 'white', // White background color
+              color: 'green',   // Green text color
+              border: '1px solid green' // Optional: Green border
+            }}
+          >
+            Registration successful! Redirecting...
+          </Alert>
+        </Snackbar>
       </Grid>
-      
-    );
-  };
-  
-  export default SignUpForm;
-  
+    </Grid>
+  );
+};
+
+export default SignUpForm;

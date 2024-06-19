@@ -7,35 +7,38 @@ export const normalizeData = (bodyItems) => {
   return bodyItems.map(item => ({
     ...item,
     id: uuidv4(),
-    Titre: item.Titre,
+    titre: item.titre,
     Required: item.Required || false,
   }));
 };
 
-export const constructPayload = (formTitle, formFooter, bodyItems, design) => {
+export const constructPayload = (formTitle, formFooter, bodyItems, design, siteWebId) => {
   const body = bodyItems.map(item => ({
-    titre: item.Titre,
+    titre: item.titre,
     type: item.type,
-    respenseText: item.RespenseText,
+    respenseText: item.respenseText,
     required: item.Required || false,
   }));
-
+  const footer = formFooter.map(item => ({
+    titre: item.titre,
+    linkNextForm: item.linkNextForm
+  }));
   return {
-    siteWebId: '660d430dcd246c7eb48790f9', // Replace with actual site web ID
+     siteWebId, // Replace with actual site web ID
     formulaire: {
       head: {
         title: formTitle
       },
       body: body,
-      footer: {
-        titre: formFooter
-      }
+      footer: footer
     },
     excelFileLink: design.excelFileLink,
+    codeBoard:design.codeBoard,
     design: {
-      productImages: design.productsImages,
+      productImages: design.productImages,
       backgroundColor: design.backgroundColor,
-      logo: design.logo
+      logo: design.logo,
+      
     }
   };
 };

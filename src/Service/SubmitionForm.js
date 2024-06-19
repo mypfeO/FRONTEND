@@ -7,7 +7,7 @@ export const getFormByformIDSiteId = async (siteWebId, formId) => {
   try {
     const response = await axios.get(`${API_URL}/${siteWebId}/${formId}`, {
       headers: {
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json', 
       }
     });
     console.log("Calling API with siteWebId:", siteWebId, "and formId:", formId);
@@ -19,26 +19,9 @@ export const getFormByformIDSiteId = async (siteWebId, formId) => {
   }
 };
 export const submitForm = async (body, excelFileLink) => {
-  const formData = new FormData();
-  body.forEach((item, index) => {
-    // Append text fields with exact key names
-    formData.append(`Body[${index}].Titre`, item.Titre);
-    formData.append(`Body[${index}].ImageLink`, String(item.ImageLink));
-
-    if (item.ImageLink && item.RespenseFile) {
-      formData.append(`Body[${index}].RespenseFile`, item.RespenseFile, item.RespenseFile.name);
-    }
-    if (!item.ImageLink) {
-      formData.append(`Body[${index}].RespenseText`, item.RespenseText || '');
-    }
-  });
-
-  // Append ExcelFileLink
-  formData.append('ExcelFileLink', excelFileLink);
-
   try {
-    const response = await axios.post(`${API_URL}/submit`, formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
+    const response = await axios.post(`${API_URL}/submit`,{body, excelFileLink} , {
+      headers: { 'Content-Type': 'application/json' },
     });
     return response.data;
   } catch (error) {

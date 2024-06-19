@@ -1,12 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Grid, Typography, Button } from "@mui/material";
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 
+import '../CreationFormulaire/Styles/Formulaire.css'; // Ensure this imports your styles
 const Login = () => {
   const [showLoginForm, setShowLoginForm] = useState(true);
 
-  const toggleForm = () => setShowLoginForm(!showLoginForm);
+    
+    useEffect(() => {
+    // Set body background color to white when Login component is mounted
+    document.body.style.background = '#FFFFFF';
+
+    // Cleanup: Reset to gradient background when component is unmounted
+    return () => {
+      document.body.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    };
+  }, []);
+    const handleSuccess = () => {
+      // Redirect to login form after registration
+      setShowLoginForm(true);
+    };  
+  
+    const toggleForm = () => setShowLoginForm(!showLoginForm);
 
   return (
     <Grid container justifyContent="center">
@@ -26,7 +42,9 @@ const Login = () => {
         </Typography>
       </Grid>
       <Grid item xs={12} sm={12} md={9}>
-        {showLoginForm ? <LoginForm /> : <SignUpForm />}
+        
+          {showLoginForm ? <LoginForm /> : <SignUpForm onSuccess={handleSuccess} />}
+        
         <Grid
           container
           justifyContent="center"

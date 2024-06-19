@@ -15,6 +15,7 @@ const FormBodySection = ({
   handleMoveBodyItem,
   handleAddBodyItem,
 }) => {
+  console.log("bodyItems:", bodyItems);
   const [{ isOver }, bodyDrop] = useDrop({
     accept: ['FORM_TEXT_FIELD', 'FORM_FILE_IMAGE', 'FORM_FILE_VIDEO'],
     drop: (item, monitor) => {
@@ -22,23 +23,26 @@ const FormBodySection = ({
       const newItem = monitor.getItemType() === 'FORM_FILE_IMAGE' ? {
         id,
         type: 'socle image',
-        Titre: '',
-        RespenseText: '',
+        titre: '',
+        respenseText: '',
         fileName: '',
         Required: false,
+        isFetched: false // Mark new items as not fetched
       } : monitor.getItemType() === 'FORM_FILE_VIDEO' ? {
         id,
         type: 'socle video',
-        Titre: '',
-        RespenseText: '',
+        titre: '',
+        respenseText: '',
         fileName: '',
         Required: false,
+        isFetched: false // Mark new items as not fetched
       } : {
         id,
         type: 'text',
-        Titre: '',
-        RespenseText: '',
+        titre: '',
+        respenseText: '',
         Required: false,
+        isFetched: false // Mark new items as not fetched
       };
       setBodyItems((prevItems) => [...prevItems, newItem]);
     },
